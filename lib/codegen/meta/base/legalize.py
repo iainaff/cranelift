@@ -72,7 +72,7 @@ expand.custom_legalize(insts.call, 'expand_call')
 # TODO: Add sufficient XForm syntax that we don't need to hand-code these.
 expand.custom_legalize(insts.trapz, 'expand_cond_trap')
 expand.custom_legalize(insts.trapnz, 'expand_cond_trap')
-expand.custom_legalize(insts.br_table, 'expand_br_table')
+# expand.custom_legalize(insts.br_table, 'expand_br_table')
 expand.custom_legalize(insts.select, 'expand_select')
 
 # Custom expansions for floating point constants.
