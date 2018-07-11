@@ -112,6 +112,7 @@ where
     CS: CodeSink,
     EI: Fn(&Function, Inst, &mut RegDiversions, &mut CS),
 {
+    // add support of br_table...
     let mut divert = RegDiversions::new();
     for ebb in func.layout.ebbs() {
         divert.clear();

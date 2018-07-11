@@ -492,6 +492,11 @@ enc_both(base.brz.b1, r.t8jccd_abcd, 0x84)
 enc_both(base.brnz.b1, r.t8jccb_abcd, 0x75)
 enc_both(base.brnz.b1, r.t8jccd_abcd, 0x85)
 
+# Branch Table
+#
+#
+enc_both(base.br_table, r.br_table)
+
 #
 # Trap as ud2
 #

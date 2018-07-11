@@ -13,7 +13,7 @@ from base.formats import Trap, Call, CallIndirect, Store, Load
 from base.formats import IntCompare, IntCompareImm, FloatCompare
 from base.formats import IntCond, FloatCond
 from base.formats import IntSelect, IntCondTrap, FloatCondTrap
-from base.formats import Jump, Branch, BranchInt, BranchFloat
+from base.formats import Jump, Branch, BranchInt, BranchFloat, BranchTable
 from base.formats import Ternary, FuncAddr, UnaryGlobalVar
 from base.formats import RegMove, RegSpill, RegFill, CopySpecial
 from base.formats import LoadComplex, StoreComplex
@@ -126,7 +126,7 @@ def map_regs_norex(regs):
 class TailRecipe:
     """
     Generate encoding recipes on demand.
-
+ 
     x86 encodings are somewhat orthogonal with the opcode representation on
     one side and the ModR/M, SIB and immediate fields on the other side.
 
@@ -1567,6 +1567,22 @@ rcmp_sp = TailRecipe(
         modrm_rr(in_reg0, RU::rsp.into(), sink);
         ''')
 
+# Branch Table
+#
+#
+br_table = TailRecipe(
+        'br_table', BranchTable, size=4, ins=FLAG.rflags, outs=(),
+        branch_range=32,
+        clobbers_flags=False,
+        instp=floatccs(BranchFloat),
+        emit='''
+        // load table address
+        // add offset
+        // jump
+        PUT_OP(bits | fcc2opc(cond), BASE_REX, sink);
+        disp4(destination, func, sink);
+        ''')
+
 # Test-and-branch.
 #
 # This recipe represents the macro fusion of a test and a conditional branch.
@@ -1670,7 +1686,7 @@ t8jccd_long = TailRecipe(
         't8jccd_long', Branch, size=5 + 6, ins=GPR, outs=(),
         branch_range=32,
         emit='''
-        // test32 r, 0xff.
+        // test32 r, 0xff.iain
         PUT_OP((bits & 0xff00) | 0xf7, rex1(in_reg0), sink);
         modrm_r_bits(in_reg0, bits, sink);
         sink.put4(0xff);

@@ -124,6 +124,8 @@ impl<'a> CodeSink for MemoryCodeSink<'a> {
 
     fn reloc_jt(&mut self, rel: Reloc, jt: JumpTable) {
         let ofs = self.offset();
+        println!("********* IN reloc_jt *********************************************************");
+        //panic!("********* IN reloc_jt *********************************************************");
         self.relocs.reloc_jt(ofs, rel, jt);
     }
 

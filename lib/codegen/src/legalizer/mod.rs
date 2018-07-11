@@ -166,42 +166,65 @@ fn expand_cond_trap(
     cfg.recompute_ebb(pos.func, new_ebb);
 }
 
-/// Jump tables.
-fn expand_br_table(
-    inst: ir::Inst,
-    func: &mut ir::Function,
-    cfg: &mut ControlFlowGraph,
-    _isa: &TargetIsa,
-) {
-    use ir::condcodes::IntCC;
+// /// Jump tables.
+// fn expand_br_table(
+//     inst: ir::Inst,
+//     func: &mut ir::Function,
+//     cfg: &mut ControlFlowGraph,
+//     _isa: &TargetIsa,
+// ) {
+//    // use ir::condcodes::IntCC;
 
-    let (arg, table) = match func.dfg[inst] {
-        ir::InstructionData::BranchTable {
-            opcode: ir::Opcode::BrTable,
-            arg,
-            table,
-        } => (arg, table),
-        _ => panic!("Expected br_table: {}", func.dfg.display_inst(inst, None)),
-    };
+//     println!("********* IN expand_br_table *********************************************************");
 
-    // This is a poor man's jump table using just a sequence of conditional branches.
-    // TODO: Lower into a jump table load and indirect branch.
-    let table_size = func.jump_tables[table].len();
-    let mut pos = FuncCursor::new(func).at_inst(inst);
-    pos.use_srcloc(inst);
+//     println!("inst {}", inst);
+//     println!("func {}", func);
+//     println!("cfg {}", inst);
 
-    for i in 0..table_size {
-        if let Some(dest) = pos.func.jump_tables[table].get_entry(i) {
-            let t = pos.ins().icmp_imm(IntCC::Equal, arg, i as i64);
-            pos.ins().brnz(t, dest, &[]);
-        }
-    }
+//     let (arg, table) = match func.dfg[inst] {
+//         ir::InstructionData::BranchTable {
+//             opcode: ir::Opcode::BrTable,
+//             arg,
+//             table,
+//         } => (arg, table),
+//         _ => panic!("Expected br_table: {}", func.dfg.display_inst(inst, None)),
+//     };
 
-    // `br_table` falls through when nothing matches.
-    let ebb = pos.current_ebb().unwrap();
-    pos.remove_inst();
-    cfg.recompute_ebb(pos.func, ebb);
-}
+//     println!("inst {}", inst);
+//     println!("func {}", func);
+//     println!("cfg {}", inst);
+//     println!("table {}", table);
+//     println!("arg {}", arg);
+
+//     println!("SKIPPPP");
+
+//     // This is a poor man's jump table using just a sequence of conditional branches.
+//     // TODO: Lower into a jump table load and indirect branch.
+//     let table_size = func.jump_tables[table].len();
+//     let mut pos = FuncCursor::new(func).at_inst(inst);
+//     pos.use_srcloc(inst);
+// /*
+//     println!("table_size {}", table_size);
+//     println!("inst {}", inst);
+    
+//     for i in 0..table_size {
+//         if let Some(dest) = pos.func.jump_tables[table].get_entry(i) {
+//             let t = pos.ins().icmp_imm(IntCC::Equal, arg, i as i64);
+            
+//             println!("t {}", t);
+//             println!("dest {}", dest);
+
+//             pos.ins().brnz(t, dest, &[]);
+//         }
+//     }
+// */
+//     // `br_table` falls through when nothing matches.
+//     let ebb = pos.current_ebb().unwrap();
+//     pos.remove_inst();
+//     cfg.recompute_ebb(pos.func, ebb);
+//     println!("pos.func {}", pos.func);
+
+// }
 
 /// Expand the select instruction.
 ///
